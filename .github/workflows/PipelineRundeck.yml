@@ -23,7 +23,7 @@ jobs:
       run: |
         pip install requests
         export GH_TOKEN=${{ secrets.GH_TOKEN }}
-        files=$(python trasncricao.py)
+        files=$(python scripts/PipelineRundeck/identify-yaml.py)
         echo "::set-output name=files::${files}"
 
     - name: Staging Environment Variables
