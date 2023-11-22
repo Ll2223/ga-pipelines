@@ -1,0 +1,109 @@
+name: Second Implementation
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+
+  deploy-dev:
+    name: Deploy to dev
+    runs-on: ubuntu-latest
+    environment:
+      name: dev
+    
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Get changed YAML files
+      id: yaml-files
+      run: |
+        pip install requests
+        export GH_TOKEN=${{ secrets.GH_TOKEN }}
+        files=$(python trasncricao.py)
+        echo "::set-output name=files::${files}"
+
+    - name: Staging Environment Variables
+      id: staging-env-vars
+      uses: raven-actions/environment-variables@v1.0.0
+      with:
+        github-token: ${{ secrets.TESTE_TOKEN }}
+        environment: dev
+
+    - name: Replace with envsubst
+      run: |
+        IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
+        for file in "${yaml_files[@]}"; do
+          envsubst < $file | tee $file
+        done
+
+  deploy-hml:
+    name: Deploy to hml
+    needs: deploy-dev
+    runs-on: ubuntu-latest
+    environment:
+      name: hml
+    
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Get changed YAML files
+      id: yaml-files
+      run: |
+        pip install requests
+        export GH_TOKEN=${{ secrets.GH_TOKEN }}
+        files=$(python trasncricao.py)
+        echo "::set-output name=files::${files}"
+
+    - name: Staging Environment Variables
+      id: staging-env-vars
+      uses: raven-actions/environment-variables@v1.0.0
+      with:
+        github-token: ${{ secrets.TESTE_TOKEN }}
+        environment: hml
+
+    - name: Replace with envsubst
+      run: |
+        IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
+        for file in "${yaml_files[@]}"; do
+          envsubst < $file | tee $file
+        done
+
+  deploy-prd:
+    name: Deploy to prd
+    needs: [deploy-dev, deploy-hml]
+    runs-on: ubuntu-latest
+    environment:
+      name: prd
+    
+    steps:
+    
+    - name: Checkout code
+      uses: actions/checkout@v2
+    
+    - name: Get changed YAML files
+      id: yaml-files
+      run: |
+        pip install requests
+        export GH_TOKEN=${{ secrets.GH_TOKEN }}
+        files=$(python trasncricao.py)
+        echo "::set-output name=files::${files}"
+
+    - name: Staging Environment Variables
+      id: staging-env-vars
+      uses: raven-actions/environment-variables@v1.0.0
+      with:
+        github-token: ${{ secrets.TESTE_TOKEN }}
+        environment: prd
+
+    - name: Replace with envsubst
+      run: |
+        IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
+        for file in "${yaml_files[@]}"; do
+          envsubst < $file | tee $file
+        done
