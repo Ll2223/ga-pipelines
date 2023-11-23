@@ -66,15 +66,15 @@ jobs:
       - name: Convert Inputs to Boolean
         id: convert
         run: |
-          echo "::set-output name=hml_toddy::${{ inputs.hml == 'true' }}"
-          echo "::set-output name=hml_nescau::${{ inputs.hml_1-5 == 'true' }}"
+          echo "::set-output name=hml::${{ inputs.hml == 'true' }}"
+          echo "::set-output name=hml_1-5::${{ inputs.hml_1-5 == 'true' }}"
       
       - name: Set Outputs
         id: choose
         run: |
           echo "::set-output name=workflow_run::1"
           echo "::set-output name=hml::${{ steps.convert.outputs.hml }}"
-          echo "::set-output name=hml_nescau::${{ steps.convert.outputs.hml_1-5 }}"
+          echo "::set-output name=hml_1-5::${{ steps.convert.outputs.hml_1-5 }}"
 
   deploy-hml:
     name: Deploy to hml
