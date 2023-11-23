@@ -73,6 +73,8 @@ jobs:
         id: choose
         run: |
           echo "workflow_run=1" >> $GITHUB_ENV
+          echo "hml=${{ inputs.hml }}" >> $GITHUB_ENV
+          echo "hml_1-5=${{ inputs.hml_1-5 }}" >> $GITHUB_ENV
 
   deploy-hml:
     name: Deploy to hml
