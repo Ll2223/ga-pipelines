@@ -5,11 +5,11 @@ on:
     inputs:
       hml:
         required: true
-        type: boolean
+        type: string
         description: 'Choose HML Environments'
       hml-1_5:
         required: true
-        type: boolean
+        type: string
         description: 'Choose HML Environments'
 
 jobs:
@@ -63,12 +63,18 @@ jobs:
       steps: ${{fromJson(needs.choose.outputs.workflow_run.outputs)}}
 
     steps:
+      - name: Convert Inputs to Boolean
+        id: convert
+        run: |
+          echo "::set-output name=hml_toddy::${{ inputs.hml == 'true' }}"
+          echo "::set-output name=hml_nescau::${{ inputs.hml_1-5 == 'true' }}"
+      
       - name: Set Outputs
         id: choose
         run: |
           echo "::set-output name=workflow_run::1"
-          echo "::set-output name=hml::${{ toJson(inputs.hml) }}"
-          echo "::set-output name=hml_1-5::${{ toJson(inputs.hml_1-5) }}"
+          echo "::set-output name=hml::${{ steps.convert.outputs.hml }}"
+          echo "::set-output name=hml_nescau::${{ steps.convert.outputs.hml_1-5 }}"
 
   deploy-hml:
     name: Deploy to hml
