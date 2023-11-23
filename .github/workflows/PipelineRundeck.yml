@@ -1,9 +1,11 @@
 name: Second Implementation
 
-on: 
-  push:
-    branches:
-      - main
+on:
+  workflow_call:
+    inputs:
+      repo-name:
+        required: false
+        type: string
 
 jobs:
 
