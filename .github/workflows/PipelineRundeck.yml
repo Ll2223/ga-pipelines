@@ -73,11 +73,13 @@ jobs:
         id: choose
         run: |
           echo "::set-output name=workflow_run::1"
+          echo "::set-output name=hml::${{ inputs.hml }}"
+          echo "::set-output name=hml_1-5::${{ inputs.hml_1-5 }}"
 
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ env.HML == 'true' }}
+    if: ${{ needs.dispatch_pipelines.outputs.hml == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -120,7 +122,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ env.HML_1-5 == 'true' }}
+    if: ${{ needs.dispatch_pipelines.outputs.hml_1-5 == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
