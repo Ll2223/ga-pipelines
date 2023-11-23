@@ -18,14 +18,22 @@ jobs:
     steps:
     
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+
+    - uses: actions/checkout@v4
+      name: Checkout scripts
+      with:
+         repository: Ll2223/ga-pipelines
+         token: ${{ secrets.GH_TOKEN }}
+         path: templates
+         sparse-checkout: scripts/PipelineRundeck
     
     - name: Get changed YAML files
       id: yaml-files
       run: |
         pip install requests
         export GH_TOKEN=${{ secrets.GH_TOKEN }}
-        files=$(python Ll2223/ga-pipelines/blob/main/scripts/PipelineRundeck/identify-yaml.py)
+        files=$(python templates/scripts/PipelineRundeck/identify-yaml.py)
         echo "::set-output name=files::${files}"
 
     - name: Staging Environment Variables
