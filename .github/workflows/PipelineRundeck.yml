@@ -2,10 +2,6 @@ name: Second Implementation
 
 on:
   workflow_call:
-    inputs:
-      repo-name:
-        required: false
-        type: string
 
 jobs:
 
