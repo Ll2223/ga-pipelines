@@ -68,7 +68,7 @@ jobs:
         run: |
           echo "::set-output name=workflow_run::1"
           echo "::set-output name=hml::${{ toJson(inputs.hml) }}"
-          echo "::set-output name=hml_1-5::${{ ${{ toJson(inputs.hml_toddy) }}"
+          echo "::set-output name=hml_1-5::${{ ${{ toJson(inputs.hml_1-5) }}"
 
   deploy-hml:
     name: Deploy to hml
