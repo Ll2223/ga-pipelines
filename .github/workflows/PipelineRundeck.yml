@@ -66,20 +66,18 @@ jobs:
       - name: Convert Inputs to Boolean
         id: convert
         run: |
-          echo "::set-output name=hml::${{ inputs.hml == 'true' }}"
-          echo "::set-output name=hml_1-5::${{ inputs.hml_1-5 == 'true' }}"
-      
+          echo "HML=${{ inputs.hml }}" >> $GITHUB_ENV
+          echo "HML_1-5=${{ inputs.hml_1-5 }}" >> $GITHUB_ENV
+
       - name: Set Outputs
         id: choose
         run: |
           echo "::set-output name=workflow_run::1"
-          echo "::set-output name=hml::${{ steps.convert.outputs.hml }}"
-          echo "::set-output name=hml_1-5::${{ steps.convert.outputs.hml_1-5 }}"
 
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == 'true' }}
+    if: ${{ env.HML == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -122,7 +120,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == 'true' }}
+    if: ${{ env.HML_1-5 == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
