@@ -56,6 +56,8 @@ jobs:
         done
   
   dispatch_pipelines:
+    name: Select HML Environment's
+    needs: deploy-dev
     runs-on: ubuntu-latest
     outputs:
       steps: ${{fromJson(needs.choose.outputs.workflow_run.outputs)}}
@@ -65,13 +67,13 @@ jobs:
         id: choose
         run: |
           echo "::set-output name=workflow_run::1"
-          echo "::set-output name=hml::${{ github.event.inputs.hml_toddy == 'true' ? '1' : '0' }}"
-          echo "::set-output name=hml_1-5::${{ github.event.inputs.hml_nescau == 'true' ? '1' : '0' }}"
+          echo "::set-output name=hml::${{ toJson(inputs.hml) }}"
+          echo "::set-output name=hml_1-5::${{ ${{ toJson(inputs.hml_toddy) }}"
 
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == '1' && needs.dispatch_pipelines.outputs.hml == '1' }}
+    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -114,7 +116,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == '1' && needs.dispatch_pipelines.outputs.hml_1-5 == '1' }}
+    if: ${{ needs.dispatch_pipelines.outputs.workflow_run == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
