@@ -26,7 +26,7 @@ def get_modified_yaml_files(username, repo_name, token):
 
 # Substitua 'LeoBGs1', 'app-cinema' e os.getenv('GH_TOKEN') pelos seus valores reais
 username = 'Ll2223'
-repo_name = 'teste-cicd'
+repo_name = os.environ.get('GITHUB_REPOSITORY')
 token = os.getenv('GH_TOKEN')
 
 result = get_modified_yaml_files(username, repo_name, token)
