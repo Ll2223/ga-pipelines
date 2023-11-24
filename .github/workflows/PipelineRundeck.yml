@@ -150,7 +150,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
-    if: ${{ needs.hml_toddy_pipeline.outputs.hml == '1' || needs.hml_nescau_pipeline.outputs.hml_1-5 == '1' }}
+    if: "needs.deploy-hml.outputs.workflow_run == '1' || needs.deploy-hml-1-5.outputs.workflow_run == '1'"
     runs-on: ubuntu-latest
     environment:
       name: prd
