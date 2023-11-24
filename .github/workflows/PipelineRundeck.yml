@@ -73,13 +73,11 @@ jobs:
         id: choose
         run: |
           echo "workflow_run=1" >> $GITHUB_ENV
-          echo "hml=${{ inputs.hml }}" >> $GITHUB_ENV
-          echo "hml_1-5=${{ inputs.hml_1-5 }}" >> $GITHUB_ENV
 
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: env.HML == 'true'
+    if: runner.fileExists('hml.txt')
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -88,6 +86,9 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set HML Variable
+      run: echo "HML=true" > hml.txt
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -122,7 +123,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: env.HML_1-5 == 'true'
+    if: runner.fileExists('hml_1-5.txt')
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
@@ -131,6 +132,9 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set HML_1_5 Variable
+      run: echo "HML_1-5=true" > hml_1-5.txt
 
     - uses: actions/checkout@v4
       name: Checkout scripts
