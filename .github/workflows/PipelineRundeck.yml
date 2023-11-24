@@ -71,6 +71,7 @@ jobs:
         ENV: Pipeline-Actions
         HOST: http://a26692b9fa2844713a705929d3391fc3-724920919.us-east-1.elb.amazonaws.com:4443/user/login
       run: |
+        cd /templates/scripts/PipelineRundeck/
         ./templates/scripts/PipelineRundeck/post-rundeck.sh
   
   deploy-hml_1-5:
