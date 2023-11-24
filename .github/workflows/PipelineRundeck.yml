@@ -14,50 +14,8 @@ on:
 
 jobs:
 
-  deploy-dev:
-    name: Deploy to dev
-    runs-on: ubuntu-latest
-    environment:
-      name: dev
-    
-    steps:
-    
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - uses: actions/checkout@v4
-      name: Checkout scripts
-      with:
-         repository: Ll2223/ga-pipelines
-         token: ${{ secrets.GH_TOKEN }}
-         path: templates
-         sparse-checkout: scripts/PipelineRundeck
-    
-    - name: Get changed YAML files
-      id: yaml-files
-      run: |
-        pip install requests
-        export GH_TOKEN=${{ secrets.GH_TOKEN }}
-        files=$(python templates/scripts/PipelineRundeck/identify-yaml.py)
-        echo "::set-output name=files::${files}"
-
-    - name: Staging Environment Variables
-      id: staging-env-vars
-      uses: raven-actions/environment-variables@v1.0.0
-      with:
-        github-token: ${{ secrets.TESTE_TOKEN }}
-        environment: dev
-
-    - name: Replace with envsubst
-      run: |
-        IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
-        for file in "${yaml_files[@]}"; do
-          envsubst < $file | tee $file
-        done
-
   deploy-hml:
     name: Deploy to hml
-    needs: deploy-dev
     #if: "inputs.hml == 'true' && inputs.hml_1-5 == 'false'"
     if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
@@ -106,12 +64,13 @@ jobs:
   
   deploy-hml_1-5:
     name: Deploy to hml 1-5
-    needs: deploy-dev
+    strategy:
+      matrix:
+        environment: ["HML-1", "HML-5"]
     #if: "inputs.hml_1-5 == 'true' && inputs.hml == 'false'"
     if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
-    environment:
-      name: hml_1-5
+    environment: ${{ matrix.environment }}
     
     steps:
     
@@ -144,7 +103,7 @@ jobs:
       uses: raven-actions/environment-variables@v1.0.0
       with:
         github-token: ${{ secrets.TESTE_TOKEN }}
-        environment: hml_1-5
+        environment: ${{ matrix.environment }}
 
     - name: Replace with envsubst
       run: |
@@ -155,7 +114,7 @@ jobs:
 
   deploy-prd:
     name: Deploy to prd
-    needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
+    needs: [deploy-hml, deploy-hml_1-5]
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
