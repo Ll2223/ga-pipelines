@@ -150,7 +150,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
-    if: ${{ needs.deploy-hml.outputs.result == 'true' || needs.deploy-hml-1-5.outputs.result == 'true' }}
+    #if: ${{ needs.deploy-hml.outputs.result == 'true' || needs.deploy-hml-1-5.outputs.result == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: prd
