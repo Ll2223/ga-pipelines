@@ -58,7 +58,8 @@ jobs:
   deploy-hml:
     name: Deploy to hml
     needs: deploy-dev
-    if: "inputs.hml == 'true' && inputs.hml_1-5 == 'false'"
+    #if: "inputs.hml == 'true' && inputs.hml_1-5 == 'false'"
+    if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -106,7 +107,8 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: deploy-dev
-    if: "inputs.hml_1-5 == 'true' && inputs.hml == 'false'"
+    #if: "inputs.hml_1-5 == 'true' && inputs.hml == 'false'"
+    if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
@@ -154,8 +156,8 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
-    #if: ${{ always() && (needs.deploy-hml.outputs.RESULT == 'success') || (needs.deploy-hml-1-5.outputs.RESULT == 'success') }}
-    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
+    if: ${{ always() && (needs.deploy-hml.outputs.RESULT || '') == 'success' || (needs.deploy-hml-1-5.outputs.RESULT || '') == 'success' }}
+    #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
       name: prd
