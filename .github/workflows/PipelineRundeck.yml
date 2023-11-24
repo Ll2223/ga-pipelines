@@ -77,7 +77,7 @@ jobs:
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: runner.fileExists('hml.txt')
+    if: env.HML == 'true'
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -88,7 +88,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set HML Variable
-      run: echo "HML=true" > hml.txt
+      run: echo "HML=true" >> $GITHUB_ENV
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -123,7 +123,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: runner.fileExists('hml_1-5.txt')
+    if: env.HML_1-5 == 'true'
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
@@ -134,7 +134,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Set HML_1_5 Variable
-      run: echo "HML_1-5=true" > hml_1-5.txt
+      run: echo "HML_1-5=true" >> $GITHUB_ENV
 
     - uses: actions/checkout@v4
       name: Checkout scripts
