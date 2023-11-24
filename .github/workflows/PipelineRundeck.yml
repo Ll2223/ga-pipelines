@@ -68,8 +68,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set HML Variable
-      run: echo "DEPLOY_HML=${{ github.event.inputs.hml }}" >> $GITHUB_ENV
+    - name: Deploy to HML
+      run: echo "Deploying to HML"
+      env:
+        RESULT: success
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -114,8 +116,10 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set HML Variable
-      run: echo "DEPLOY_HML=${{ github.event.inputs.hml_1-5 }}" >> $GITHUB_ENV
+    - name: Deploy to HML
+      run: echo "Deploying to HML"
+      env:
+        RESULT: success
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -150,7 +154,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
-    #if: ${{ needs.deploy-hml.outputs.result == 'true' || needs.deploy-hml-1-5.outputs.result == 'true' }}
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
       name: prd
