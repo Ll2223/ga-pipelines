@@ -58,7 +58,7 @@ jobs:
   deploy-hml:
     name: Deploy to hml
     needs: deploy-dev
-    if: ${{ github.event.inputs.hml == 'true' }}
+    if: "github.event.inputs.hml == 'true' && github.event.inputs.hml_1-5 == 'false'"
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -104,7 +104,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: deploy-dev
-    if: ${{ github.event.inputs.hml_1-5 == 'true' }}
+    if: "github.event.inputs.hml_1-5 == 'true' && github.event.inputs.hml == 'false'"
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
