@@ -73,11 +73,13 @@ jobs:
         id: choose
         run: |
           echo "workflow_run=1" >> $GITHUB_ENV
+          echo "DEPLOY_HML=${{ inputs.hml == 'true' }}" >> $GITHUB_ENV
+          echo "DEPLOY_HML_1-5=${{ inputs.hml_1-5 == 'true' }}" >> $GITHUB_ENV
 
   deploy-hml:
     name: Deploy to hml
     needs: [deploy-dev, dispatch_pipelines]
-    if: env.HML == 'true'
+    if: env.DEPLOY_HML
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -123,7 +125,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: [deploy-dev, dispatch_pipelines]
-    if: env.HML_1-5 == 'true'
+    if: env.DEPLOY_HML_1-5
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
