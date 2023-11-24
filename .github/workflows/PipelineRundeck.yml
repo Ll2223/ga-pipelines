@@ -149,7 +149,7 @@ jobs:
 
   deploy-prd:
     name: Deploy to prd
-    needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
+    needs: [deploy-dev]
     if: "needs.deploy-hml.result == 'success' || needs.deploy-hml_1-5.result == 'success'"
     runs-on: ubuntu-latest
     environment:
