@@ -62,6 +62,9 @@ jobs:
           envsubst < $file | tee $file
         done
 
+    - name: Grant execute permission to script
+      run: chmod +x ./templates/scripts/PipelineRundeck/post-rundeck.sh
+
     - name: Post Job to Rundeck
       env:
         RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
