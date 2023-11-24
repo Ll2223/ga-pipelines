@@ -150,7 +150,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-dev, deploy-hml, deploy-hml_1-5]
-    if: "needs.deploy-hml.outputs.workflow_run == '1' || needs.deploy-hml-1-5.outputs.workflow_run == '1'"
+    if: "needs.deploy-hml.result == 'success' || needs.deploy-hml_1-5.result == 'success'"
     runs-on: ubuntu-latest
     environment:
       name: prd
