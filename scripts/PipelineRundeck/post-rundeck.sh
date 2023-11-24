@@ -11,12 +11,11 @@ rdeck_api="38"
 # specific api call info
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
-# Obtendo a lista de arquivos YAML do script Python
-IFS=',' read -ra yaml_files << EOF
-$yaml_files_csv
-EOF
+# Obtendo a lista de arquivos YAML diretamente do script Python
+yaml_files_csv=$(python identify-yaml.py)  # Modifique conforme necessário
 
 # Iterando sobre a lista de arquivos e fazendo a chamada de API para cada um
+IFS=',' read -ra yaml_files <<< "$yaml_files_csv"
 for yaml_file in "${yaml_files[@]}"; do
   # api call
   curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
