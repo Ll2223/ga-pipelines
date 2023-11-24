@@ -5,11 +5,11 @@ on:
     inputs:
       hml:
         required: true
-        type: string
+        type: boolean
         description: 'Choose HML Environments'
       hml_1-5:
         required: true
-        type: string
+        type: boolean
         description: 'Choose HML Environments'
 
 jobs:
@@ -54,32 +54,11 @@ jobs:
         for file in "${yaml_files[@]}"; do
           envsubst < $file | tee $file
         done
-  
-  dispatch_pipelines:
-    name: Select HML Environment's
-    needs: deploy-dev
-    runs-on: ubuntu-latest
-    outputs:
-      steps: ${{fromJson(needs.choose.outputs.workflow_run.outputs)}}
-
-    steps:
-      - name: Convert Inputs to Boolean
-        id: convert
-        run: |
-          echo "HML=${{ inputs.hml }}" >> $GITHUB_ENV
-          echo "HML_1-5=${{ inputs.hml_1-5 }}" >> $GITHUB_ENV
-
-      - name: Set Outputs
-        id: choose
-        run: |
-          echo "workflow_run=1" >> $GITHUB_ENV
-          echo "DEPLOY_HML=${{ inputs.hml == 'true' }}" >> $GITHUB_ENV
-          echo "DEPLOY_HML_1-5=${{ inputs.hml_1-5 == 'true' }}" >> $GITHUB_ENV
 
   deploy-hml:
     name: Deploy to hml
-    needs: [deploy-dev, dispatch_pipelines]
-    if: env.DEPLOY_HML
+    needs: deploy-dev
+    if: github.event.inputs.hml == true
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -88,9 +67,6 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Set HML Variable
-      run: echo "HML=true" >> $GITHUB_ENV
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -124,8 +100,8 @@ jobs:
   
   deploy-hml_1-5:
     name: Deploy to hml 1-5
-    needs: [deploy-dev, dispatch_pipelines]
-    if: env.DEPLOY_HML_1-5
+    needs: deploy-dev
+    if: github.event.inputs.hml_1-5 == true
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
