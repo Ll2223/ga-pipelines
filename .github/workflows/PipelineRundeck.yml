@@ -5,11 +5,11 @@ on:
     inputs:
       hml:
         required: true
-        type: boolean
+        type: string
         description: 'Choose HML Environments'
       hml_1-5:
         required: true
-        type: boolean
+        type: string
         description: 'Choose HML Environments'
 
 jobs:
@@ -58,7 +58,7 @@ jobs:
   deploy-hml:
     name: Deploy to hml
     needs: deploy-dev
-    if: github.event.inputs.hml == true
+    if: ${{ github.event.inputs.hml == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml
@@ -67,6 +67,9 @@ jobs:
     
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set HML Variable
+      run: echo "DEPLOY_HML=${{ github.event.inputs.hml }}" >> $GITHUB_ENV
 
     - uses: actions/checkout@v4
       name: Checkout scripts
@@ -101,7 +104,7 @@ jobs:
   deploy-hml_1-5:
     name: Deploy to hml 1-5
     needs: deploy-dev
-    if: github.event.inputs.hml_1-5 == true
+    if: ${{ github.event.inputs.hml_1-5 == 'true' }}
     runs-on: ubuntu-latest
     environment:
       name: hml_1-5
@@ -111,8 +114,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set HML_1_5 Variable
-      run: echo "HML_1-5=true" >> $GITHUB_ENV
+    - name: Set HML Variable
+      run: echo "DEPLOY_HML=${{ github.event.inputs.hml_1-5 }}" >> $GITHUB_ENV
 
     - uses: actions/checkout@v4
       name: Checkout scripts
