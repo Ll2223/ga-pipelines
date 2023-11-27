@@ -34,7 +34,7 @@ if [ "${#modified_files[@]}" -gt 0 ]; then
       "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
 
     # Move o arquivo temporário para o arquivo original
-    mv "$temp_file" "$yaml_file"
+    mv "$yaml_file.tmp" "$yaml_file"
   done
 else
   echo "Nenhum arquivo YAML modificado encontrado após envsubst."
