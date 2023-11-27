@@ -74,10 +74,10 @@ jobs:
 
     - name: Post Job to Rundeck
       run: bash templates/scripts/PipelineRundeck/post-rundeck.sh
-      env:
-        RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
-        ENV: Pipeline-Actions
-        HOST: ${{ secrets.RUNDECK_HOST }}
+      #env:
+        #RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
+        #ENV: Pipeline-Actions
+       # HOST: ${{ secrets.RUNDECK_HOST }}
   
   deploy-hml_1-5:
     name: Deploy to hml 1-5
