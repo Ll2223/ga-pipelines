@@ -25,10 +25,19 @@ if [ -f "$modified_files_path" ]; then
   if [ "${#modified_files[@]}" -gt 0 ]; then
     for yaml_file in "${modified_files[@]}"; do
       # api call
-      curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
+      response=$(curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
         -F "xmlBatch=@$yaml_file" \
-        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
-        done
+        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml" 2>&1)
+
+      # Captura e imprime o código de saída do último comando
+      curl_exit_code=$?
+
+      # Analisa o corpo da resposta em busca de erros
+      if [[ "$response" == *"\"error\":true"* ]]; then
+        echo "Erro na API Rundeck: $response"
+        exit 1
+      fi
+    done
   else
     echo "Nenhum arquivo YAML modificado encontrado após envsubst."
     exit 1
@@ -40,11 +49,6 @@ fi
 
 # Desativa o modo de depuração
 set +x
-# Captura e imprime o código de saída do último comando
-curl_exit_code=$?
-
-# Retorna 0 (sucesso) se o código de saída for 0, caso contrário, retorna o código de saída
-[ $curl_exit_code -eq 0 ] || exit $curl_exit_code
 
 # Captura e imprime o código de saída do script manualmente
 script_exit_code=$?
