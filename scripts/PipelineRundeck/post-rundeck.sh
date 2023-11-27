@@ -13,22 +13,20 @@ rdeck_api="38"
 # specific api call info
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
-# Obtendo a lista de arquivos YAML diretamente do script Python
-yaml_files_csv=$(python templates/scripts/PipelineRundeck/identify-yaml.py)  # Modifique conforme necessário
-
 # Iterando sobre a lista de arquivos e fazendo a chamada de API para cada um
-IFS=',' read -ra yaml_files <<< "$yaml_files_csv"
-for yaml_file in "${yaml_files[@]}"; do
-  # Verifica se o arquivo existe
-  if [ -e "$yaml_file" ]; then
+IFS=',' read -ra yaml_files <<< "$(ls -1 templates/scripts/PipelineRundeck/*.yml)"
+
+# Verifica se há arquivos YAML modificados
+if [ "${#yaml_files[@]}" -gt 0 ]; then
+  for yaml_file in "${yaml_files[@]}"; do
     # api call
     curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-     -F xmlBatch=@"$(pwd)/$yaml_file" \
-     "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
-  else
-    echo "Arquivo não encontrado: $yaml_file"
-  fi
-done
+      -F xmlBatch=@"$(pwd)/$yaml_file" \
+      "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+  done
+else
+  echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+fi
 
 # Desativa o modo de depuração
 set +x
