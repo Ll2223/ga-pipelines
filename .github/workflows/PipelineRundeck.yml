@@ -122,11 +122,27 @@ jobs:
         environment: ${{ matrix.environment }}
 
     - name: Replace with envsubst
+      id: replace-with-envsubst
       run: |
         IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
         for file in "${yaml_files[@]}"; do
-          envsubst < $file | tee $file
+          envsubst < "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+          echo "$file" >> modified_files.txt
         done
+        echo "::set-output name=modified_files::${yaml_files[*]}"
+        echo "::set-output name=modified_files_path::modified_files.txt"
+
+    - name: Show modified files
+      run: cat modified_files.txt
+
+    - name: Grant execute permissions to post-rundeck.sh
+      run: chmod +x templates/scripts/PipelineRundeck/post-rundeck.sh
+
+    - name: Post Job to Rundeck
+      run: bash templates/scripts/PipelineRundeck/post-rundeck.sh
+      env:
+        RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
+        HOST: ${{ secrets.RUNDECK_HOST }}
 
   deploy-prd:
     name: Deploy to prd
