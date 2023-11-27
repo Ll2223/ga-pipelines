@@ -30,7 +30,7 @@ if [ "${#modified_files[@]}" -gt 0 ]; then
 
     # api call
     curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-      -F "xmlBatch=@$(pwd)/$yaml_file" \
+      -F "xmlBatch=@$yaml_file" \
       "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
 
     # Move o arquivo temporário para o arquivo original
