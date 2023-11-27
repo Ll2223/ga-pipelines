@@ -62,17 +62,15 @@ jobs:
           envsubst < $file | tee $file
         done
 
-    - name: Grant execute permission to script
-      run: chmod +x ./templates/scripts/PipelineRundeck/post-rundeck.sh
+    - name: Grant execute permissions to post-rundeck.sh
+      run: chmod +x scripts/PipelineRundeck/post-rundeck.sh
 
     - name: Post Job to Rundeck
+      run: bash templates/scripts/PipelineRundeck/post-rundeck.sh
       env:
         RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
         ENV: Pipeline-Actions
         HOST: http://a26692b9fa2844713a705929d3391fc3-724920919.us-east-1.elb.amazonaws.com:4443/user/login
-      run: |
-        cd ./templates/scripts/PipelineRundeck/
-        sh post-rundeck.sh
   
   deploy-hml_1-5:
     name: Deploy to hml 1-5
