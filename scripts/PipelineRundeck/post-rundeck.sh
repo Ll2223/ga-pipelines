@@ -27,15 +27,17 @@ if [ -f "$modified_files_path" ]; then
       # api call
       curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
         -F "xmlBatch=@$yaml_file" \
-        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"; then
-      echo "Erro ao importar o arquivo $yaml_file para o Rundeck."
-      exit 1
-    fi
-  done
+        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+        done
+  else
+    echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+    exit 1
+  fi
 else
-  echo "Nenhum arquivo YAML modificado encontrado após envsubst."
-  exit 1  # Sai com código de erro
+  echo "Arquivo de caminhos modificados não encontrado."
+  exit 1
 fi
 
-# Retorna 0 (sucesso) no final do script
+# Desativa o modo de depuração
+set +x
 exit 0
