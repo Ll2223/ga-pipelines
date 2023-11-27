@@ -17,11 +17,11 @@ rdeck_api="45"
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
 # Obtém os arquivos modificados do passo anterior
-IFS=',' read -ra modified_files <<< "$(echo "${{ steps.replace-with-envsubst.outputs.modified_files }}")"
+modified_files="${{ steps.replace-with-envsubst.outputs.modified_files }}"
 
 # Verifica se há arquivos YAML modificados
-if [ "${#modified_files[@]}" -gt 0 ]; then
-  for yaml_file in "${modified_files[@]}"; do
+if [ -n "$modified_files" ]; then
+  echo "$modified_files" | while IFS=, read -r yaml_file; do
     # api call
     curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
       -F xmlBatch=@"$(pwd)/$yaml_file" \
