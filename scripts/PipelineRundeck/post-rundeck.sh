@@ -41,3 +41,4 @@ fi
 # Desativa o modo de depuração
 set +x
 exit 0
+trap 'exit 1' ERR
