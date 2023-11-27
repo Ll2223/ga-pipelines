@@ -3,7 +3,7 @@
 set -x  # Ativa o modo de depuração para imprimir comandos
 
 # Carrega as variáveis de ambiente do arquivo de ambiente gerado
-source "$GITHUB_ENV"
+#source "$GITHUB_ENV"
 
 # protocol
 protocol="https"
