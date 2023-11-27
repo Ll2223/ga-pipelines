@@ -22,14 +22,15 @@ IFS=',' read -ra modified_files <<< "$MODIFIED_FILES"
 # Verifica se há arquivos YAML modificados
 if [ "${#modified_files[@]}" -gt 0 ]; then
   for yaml_file in "${modified_files[@]}"; do
-    # Obtem o diretório do arquivo original
+    # Obtém o diretório do arquivo original
     dir=$(dirname "$yaml_file")
 
     # Cria o arquivo temporário no mesmo diretório do arquivo original
     temp_file="$dir/$(basename "$yaml_file").tmp"
+
     # api call
     curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-      -F xmlBatch=@"$(pwd)/$yaml_file" \
+      -F "xmlBatch=@$(pwd)/$yaml_file" \
       "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
 
     # Move o arquivo temporário para o arquivo original
