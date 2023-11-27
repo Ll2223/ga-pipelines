@@ -1,4 +1,6 @@
-#!/bin/sh
+#!/bin/bash
+
+set -x  # Ativa o modo de depuração para imprimir comandos
 
 # protocol
 protocol="https"
@@ -17,9 +19,16 @@ yaml_files_csv=$(python templates/scripts/PipelineRundeck/identify-yaml.py)  # M
 # Iterando sobre a lista de arquivos e fazendo a chamada de API para cada um
 IFS=',' read -ra yaml_files <<< "$yaml_files_csv"
 for yaml_file in "${yaml_files[@]}"; do
-  # api call
-  curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-   -F xmlBatch=@"$(pwd)/$yaml_file" \
-   "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+  # Verifica se o arquivo existe
+  if [ -e "$yaml_file" ]; then
+    # api call
+    curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
+     -F xmlBatch=@"$(pwd)/$yaml_file" \
+     "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+  else
+    echo "Arquivo não encontrado: $yaml_file"
+  fi
 done
 
+# Desativa o modo de depuração
+set +x
