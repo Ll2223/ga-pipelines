@@ -61,10 +61,10 @@ jobs:
         IFS=',' read -ra yaml_files <<< "${{ steps.yaml-files.outputs.files }}"
         for file in "${yaml_files[@]}"; do
           envsubst < "$file" > "$file.tmp" && mv "$file.tmp" "$file"
-          echo "$file"
+          echo "$file" >> modified_files.txt
         done
-        echo "MODIFIED_FILES=${yaml_files[*]}" >> $GITHUB_ENV
         echo "::set-output name=modified_files::${yaml_files[*]}"
+        echo "::set-output name=modified_files_path::modified_files.txt"
 
 
 
