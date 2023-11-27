@@ -40,5 +40,9 @@ fi
 
 # Desativa o modo de depuração
 set +x
-exit 0
-trap 'exit 1' ERR
+# Captura e imprime o código de saída manualmente
+script_exit_code=$?
+echo "Código de saída do script: $script_exit_code"
+
+# Retorna 0 (sucesso) se o código de saída for 0, caso contrário, retorna o código de saída
+[ $script_exit_code -eq 0 ] || exit $script_exit_code
