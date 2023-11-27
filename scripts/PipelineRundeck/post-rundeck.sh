@@ -13,8 +13,8 @@ rdeck_api="38"
 # specific api call info
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
-# Iterando sobre a lista de arquivos e fazendo a chamada de API para cada um
-IFS=',' read -ra yaml_files <<< "$(ls -1 templates/scripts/PipelineRundeck/*.yml)"
+# Substituir variáveis nos arquivos YAML e obter a lista de arquivos modificados
+IFS=',' read -ra yaml_files <<< "$(find . -type f -name '*.yml' -exec bash -c 'envsubst < "$0" > "$0.tmp" && mv "$0.tmp" "$0"' {} \; -print)"
 
 # Verifica se há arquivos YAML modificados
 if [ "${#yaml_files[@]}" -gt 0 ]; then
