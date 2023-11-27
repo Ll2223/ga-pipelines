@@ -32,18 +32,18 @@ if [ -f "$modified_files_path" ]; then
         -F "xmlBatch=@$yaml_file" \
         "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
         echo "Job importado com sucesso: $yaml_file"
-          else
-            echo "Erro ao importar o job: $yaml_file"
-            exit 1  # Sai do script com um código de erro
-          fi
-        done
       else
-        echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+        echo "Erro ao importar o job: $yaml_file"
+         exit 1  # Sai do script com um código de erro
       fi
-    else
-      echo "Arquivo de caminhos modificados não encontrado."
-      exit 1  # Sai do script com um código de erro
-    fi
+    done
+   else
+    echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+   fi
+else
+  echo "Arquivo de caminhos modificados não encontrado."
+  exit 1  # Sai do script com um código de erro
+fi
 
 # Desativa o modo de depuração
 set +x
