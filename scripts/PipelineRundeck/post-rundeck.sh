@@ -22,12 +22,12 @@ modified_files_path="${MODIFIED_FILES_PATH}"
 # Verifica se o arquivo existe
 if [ -f "$modified_files_path" ]; then
   # Lê os caminhos dos arquivos modificados
-  IFS=$'\n' read -d '' -ra modified_files < "$modified_files_path"
+  mapfile -t modified_files < "$modified_files_path"
 
   # Verifica se há arquivos YAML modificados
   if [ "${#modified_files[@]}" -gt 0 ]; then
     for yaml_file in "${modified_files[@]}"; do
-      # api call
+      # Realiza a chamada de API
       curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
         -F "xmlBatch=@$yaml_file" \
         "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
