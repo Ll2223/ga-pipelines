@@ -16,19 +16,27 @@ rdeck_api="45"
 # specific api call info
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
-# Obtém os caminhos dos arquivos modificados
-IFS=$'\n' read -d '' -ra modified_files < "$MODIFIED_FILES_PATH"
+# Obtém o caminho do arquivo que contém os caminhos dos arquivos modificados
+modified_files_path="${MODIFIED_FILES_PATH}"
 
-# Verifica se há arquivos YAML modificados
-if [ "${#modified_files[@]}" -gt 0 ]; then
-  for yaml_file in "${modified_files[@]}"; do
-    # api call
-    curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-      -F "xmlBatch=@$yaml_file" \
-      "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
-  done
+# Verifica se o arquivo existe
+if [ -f "$modified_files_path" ]; then
+  # Lê os caminhos dos arquivos modificados
+  IFS=$'\n' read -d '' -ra modified_files < "$modified_files_path"
+
+  # Verifica se há arquivos YAML modificados
+  if [ "${#modified_files[@]}" -gt 0 ]; then
+    for yaml_file in "${modified_files[@]}"; do
+      # api call
+      curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
+        -F "xmlBatch=@$yaml_file" \
+        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+    done
+  else
+    echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+  fi
 else
-  echo "Nenhum arquivo YAML modificado encontrado após envsubst."
+  echo "Arquivo de caminhos modificados não encontrado."
 fi
 
 # Desativa o modo de depuração
