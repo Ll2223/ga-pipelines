@@ -17,17 +17,17 @@ rdeck_api="45"
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
 # Obtém o caminho do arquivo que contém os caminhos dos arquivos modificados
-modified_files_path="${MODIFIED_FILES_PATH}"
+modified_files_path="${GITHUB_WORKSPACE}/modified_files.txt"  # Corrigido para o caminho correto
 
 # Verifica se o arquivo existe
 if [ -f "$modified_files_path" ]; then
   # Lê os caminhos dos arquivos modificados
-  mapfile -t modified_files < "$modified_files_path"
+  IFS=$'\n' read -d '' -ra modified_files < "$modified_files_path"
 
   # Verifica se há arquivos YAML modificados
   if [ "${#modified_files[@]}" -gt 0 ]; then
     for yaml_file in "${modified_files[@]}"; do
-      # Realiza a chamada de API
+      # api call
       curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
         -F "xmlBatch=@$yaml_file" \
         "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
