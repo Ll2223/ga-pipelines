@@ -19,6 +19,7 @@ IFS=',' read -ra yaml_files <<< "$yaml_files_csv"
 for yaml_file in "${yaml_files[@]}"; do
   # api call
   curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
-   -F xmlBatch=@"$yaml_file" \
+   -F xmlBatch=@"$(pwd)/$yaml_file" \
    "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
 done
+
