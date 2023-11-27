@@ -40,7 +40,13 @@ fi
 
 # Desativa o modo de depuração
 set +x
-# Captura e imprime o código de saída manualmente
+# Captura e imprime o código de saída do último comando
+curl_exit_code=$?
+
+# Retorna 0 (sucesso) se o código de saída for 0, caso contrário, retorna o código de saída
+[ $curl_exit_code -eq 0 ] || exit $curl_exit_code
+
+# Captura e imprime o código de saída do script manualmente
 script_exit_code=$?
 echo "Código de saída do script: $script_exit_code"
 
