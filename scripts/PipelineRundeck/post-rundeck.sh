@@ -12,7 +12,7 @@ rdeck_api="38"
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
 # Obtendo a lista de arquivos YAML diretamente do script Python
-yaml_files_csv=$(python identify-yaml.py)  # Modifique conforme necessário
+yaml_files_csv=$(python templates/scripts/PipelineRundeck/identify-yaml.py)  # Modifique conforme necessário
 
 # Iterando sobre a lista de arquivos e fazendo a chamada de API para cada um
 IFS=',' read -ra yaml_files <<< "$yaml_files_csv"
