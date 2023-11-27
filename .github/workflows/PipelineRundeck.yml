@@ -66,7 +66,8 @@ jobs:
         echo "::set-output name=modified_files::${yaml_files[*]}"
         echo "::set-output name=modified_files_path::modified_files.txt"
 
-
+    - name: Show modified files
+      run: cat modified_files.txt
 
     - name: Grant execute permissions to post-rundeck.sh
       run: chmod +x templates/scripts/PipelineRundeck/post-rundeck.sh
