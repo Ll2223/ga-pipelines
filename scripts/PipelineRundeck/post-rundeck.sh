@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x  # Ativa o modo de depuração para imprimir comandos
+set -e  # Sai do script se qualquer comando falhar
 
 # Carrega as variáveis de ambiente do arquivo de ambiente gerado
 #source "$GITHUB_ENV"
