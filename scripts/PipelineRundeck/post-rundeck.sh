@@ -30,7 +30,7 @@ if [ -f "$modified_files_path" ]; then
       # api call
       curl -kSsv --header "X-Rundeck-Auth-Token:${RUNDECK_TOKEN}" \
         -F "xmlBatch=@$yaml_file" \
-        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"
+        "$protocol://$rdeck_host:$rdeck_port/api/$rdeck_api/project/$rdeck_project/jobs/import?fileformat=yaml"; then
         echo "Job importado com sucesso: $yaml_file"
       else
         echo "Erro ao importar o job: $yaml_file"
