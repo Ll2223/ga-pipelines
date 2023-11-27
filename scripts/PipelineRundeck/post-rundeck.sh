@@ -2,6 +2,9 @@
 
 set -x  # Ativa o modo de depuração para imprimir comandos
 
+# Carrega as variáveis de ambiente do arquivo de ambiente gerado
+source "$GITHUB_ENV"
+
 # protocol
 protocol="https"
 
@@ -14,7 +17,7 @@ rdeck_api="45"
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
 # Obtém os arquivos modificados do passo anterior
-IFS=',' read -ra modified_files <<< "${{ steps.replace-with-envsubst.outputs.modified_files }}"
+IFS=',' read -ra modified_files <<< "$(echo "${{ steps.replace-with-envsubst.outputs.modified_files }}")"
 
 # Verifica se há arquivos YAML modificados
 if [ "${#modified_files[@]}" -gt 0 ]; then
