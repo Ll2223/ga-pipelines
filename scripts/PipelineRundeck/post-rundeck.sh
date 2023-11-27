@@ -14,7 +14,10 @@ rdeck_api="45"
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
 
 # Substituir variáveis nos arquivos YAML e obter a lista de arquivos modificados
-IFS=',' read -ra yaml_files <<< "$(find . -type f \( -name '*.yml' -o -name '*.yaml' \) -not -path '*.github/workflows*' -exec bash -c 'envsubst < "$0" > "$0.tmp" && mv "$0.tmp" "$0"' {} \; -print)"
+for yaml_file in $(find . -type f \( -name '*.yml' -o -name '*.yaml' \) -not -path '*.github/workflows*' -print); do
+  envsubst < "$yaml_file" > "$yaml_file.tmp" && mv "$yaml_file.tmp" "$yaml_file"
+  yaml_files+=("$yaml_file")
+done
 
 # Verifica se há arquivos YAML modificados
 if [ "${#yaml_files[@]}" -gt 0 ]; then
