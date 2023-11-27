@@ -8,7 +8,7 @@ protocol="https"
 # basic rundeck info
 rdeck_host="${HOST}"
 rdeck_port="4443"
-rdeck_api="38"
+rdeck_api="45"
 
 # specific api call info
 rdeck_project="${ENV}"  # Utiliza a variável de ambiente ENV definida no GitHub Actions
