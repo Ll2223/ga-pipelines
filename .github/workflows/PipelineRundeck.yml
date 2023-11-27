@@ -63,7 +63,7 @@ jobs:
         done
 
     - name: Grant execute permissions to post-rundeck.sh
-      run: chmod +x scripts/PipelineRundeck/post-rundeck.sh
+      run: chmod +x templates/scripts/PipelineRundeck/post-rundeck.sh
 
     - name: Post Job to Rundeck
       run: bash templates/scripts/PipelineRundeck/post-rundeck.sh
