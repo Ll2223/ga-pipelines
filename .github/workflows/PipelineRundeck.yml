@@ -83,7 +83,7 @@ jobs:
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: always() && (needs.deploy-hml.result == 'success' || needs.deploy-hml.result == 'skipped')
+    if: "inputs.hml_1-5 == 'true' && github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'"
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
