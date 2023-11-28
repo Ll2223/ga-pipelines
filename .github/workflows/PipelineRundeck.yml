@@ -16,7 +16,7 @@ jobs:
 
   deploy-hml:
     name: Deploy to hml
-    if: always() && needs.deploy-hml-1-5.result != 'success'
+    if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true') && (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')"
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
@@ -83,7 +83,7 @@ jobs:
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: "inputs.hml_1-5 == 'true' && github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'"
+    if: "inputs.hml_1-5 == 'true' && (inputs.hml == 'false' || inputs.hml == 'true') && (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')"
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     needs: [deploy-hml]
     runs-on: ubuntu-latest
