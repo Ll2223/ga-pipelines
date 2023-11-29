@@ -11,32 +11,11 @@ on:
         required: true
         type: string
         description: 'Choose HML Environments'
-
-  workflow_run:
-    workflows: ["deploy-hml", "deploy-hml_1-5"]
-    types:
-      - completed
-
 jobs:
-
-  ask-user-input:
-    runs-on: ubuntu-latest
-    outputs:
-      id: user-input
-    steps:
-      - name: Ask for HML Deployment
-        id: hml-deployment
-        run: |
-          echo "::set-output name=deploy-hml::$(read -p 'Deploy HML? (true/false): ' answer && echo $answer)"
-      - name: Ask for HML 1-5 Deployment
-        id: hml-1-5-deployment
-        run: |
-          echo "::set-output name=deploy-hml-1-5::$(read -p 'Deploy HML 1-5? (true/false): ' answer && echo $answer)"
 
   deploy-hml:
     name: Deploy to hml
-    needs: ask-user-input
-    if: ${{ needs.ask-user-input.outputs.deploy-hml == 'true' }}
+    if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
@@ -99,12 +78,11 @@ jobs:
     #     HOST: ${{ secrets.RUNDECK_HOST }}
   
   deploy-hml_1-5:
-    needs: ask-user-input
     name: Deploy to hml 1-5
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: ${{ needs.ask-user-input.outputs.deploy-hml-1-5 == 'true' }}
+    if:  "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
@@ -167,7 +145,7 @@ jobs:
 
   deploy-prd:
     name: Deploy to prd
-    needs: [ask-user-input, deploy-hml, deploy-hml_1-5]
+    needs: [deploy-hml, deploy-hml_1-5]
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
