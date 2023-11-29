@@ -154,20 +154,20 @@ jobs:
     #     RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
     #     HOST: ${{ secrets.RUNDECK_HOST }}
 
+  jobs:
   check-hml:
     runs-on: ubuntu-latest
     needs: [deploy-hml, deploy-hml_1-5]
-    outputs:
-      outputs: ${{ needs.hml.outputs.result + needs.hml_1-5.outputs.result }}
 
     steps:
       - name: Check HML Results
-        run: echo "Checking HML results"
+        id: check-hml-results
+        run: echo "::set-output name=outputs::${{ needs.hml.outputs.result }}${{ needs.hml_1-5.outputs.result }}"
 
   deploy-prd:
     name: Deploy to prd
     needs: [check-hml]
-    if: ${{ needs.check-hml.outputs.outputs == 'successsuccess' || needs.check-hml.outputs.outputs == 'successskipped' || needs.check-hml.outputs.outputs == 'skippedsuccess' || needs.check-hml.outputs.outputs == 'skippedskipped' }}
+    if: ${{ contains(needs.check-hml.outputs.outputs, 'success') || contains(needs.check-hml.outputs.outputs, 'skipped') }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
