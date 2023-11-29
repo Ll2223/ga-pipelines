@@ -154,18 +154,20 @@ jobs:
     #     RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
     #     HOST: ${{ secrets.RUNDECK_HOST }}
 
-  prd-pre-check:
+  check-hml:
     runs-on: ubuntu-latest
     needs: [deploy-hml, deploy-hml_1-5]
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'skipped' }}
+    outputs:
+      outputs: ${{ needs.hml.outputs.result + needs.hml_1-5.outputs.result }}
+
     steps:
-      - name: PRD Pre-Check
-        run: echo "Executing PRD Pre-Check"
+      - name: Check HML Results
+        run: echo "Checking HML results"
 
   deploy-prd:
     name: Deploy to prd
-    needs: [deploy-hml, deploy-hml_1-5, prd-pre-check]
-    if: ${{ needs.prd-pre-check.result == 'success' }}
+    needs: [check-hml]
+    if: ${{ needs.check-hml.outputs.outputs == 'successsuccess' || needs.check-hml.outputs.outputs == 'successskipped' || needs.check-hml.outputs.outputs == 'skippedsuccess' || needs.check-hml.outputs.outputs == 'skippedskipped' }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
