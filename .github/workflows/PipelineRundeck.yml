@@ -16,7 +16,7 @@ jobs:
 
   deploy-hml:
     name: Deploy to hml
-    if: "inputs.hml_1-5 == 'true' && (inputs.hml == 'false' || inputs.hml == 'true')"
+    if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true') && (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')"
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
@@ -83,7 +83,7 @@ jobs:
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: "inputs.hml_1-5 == 'true' && (inputs.hml == 'false' || inputs.hml == 'true')"
+    if: "inputs.hml_1-5 == 'true' && (inputs.hml == 'false' || inputs.hml == 'true') && (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')"
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"e
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
@@ -147,7 +147,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-hml, deploy-hml_1-5]
-    if: "always() && contains(needs.deploy-hml.result, 'success') && (contains(needs.deploy-hml_1-5.result, 'success') || contains(needs.deploy-hml_1-5.result, 'skipped')) && (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')"
+    if: "needs.deploy-hml.result == 'success' && github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main'"
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
