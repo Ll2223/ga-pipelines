@@ -157,7 +157,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-hml, deploy-hml_1-5]
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'waiting' }}
+    if: ${{ needs.deploy-hml.outputs.result == 'success' || needs.deploy-hml_1-5.outputs.result == 'success' || needs.deploy-hml.outputs.result == 'skipped' || needs.deploy-hml_1-5.outputs.result == 'skipped' }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
