@@ -19,9 +19,24 @@ on:
 
 jobs:
 
+  ask-user-input:
+    runs-on: ubuntu-latest
+    outputs:
+      id: user-input
+    steps:
+      - name: Ask for HML Deployment
+        id: hml-deployment
+        run: |
+          echo "::set-output name=deploy-hml::$(read -p 'Deploy HML? (true/false): ' answer && echo $answer)"
+      - name: Ask for HML 1-5 Deployment
+        id: hml-1-5-deployment
+        run: |
+          echo "::set-output name=deploy-hml-1-5::$(read -p 'Deploy HML 1-5? (true/false): ' answer && echo $answer)"
+
   deploy-hml:
     name: Deploy to hml
-    if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
+    needs: ask-user-input
+    if: ${{ needs.ask-user-input.outputs.deploy-hml == 'true' }}
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
@@ -84,16 +99,12 @@ jobs:
     #     HOST: ${{ secrets.RUNDECK_HOST }}
   
   deploy-hml_1-5:
+    needs: ask-user-input
     name: Deploy to hml 1-5
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: |
-      contains(needs.HML.outputs.result, 'success') ||
-      contains(needs.HML_1-5.outputs.result, 'success') ||
-      (needs.HML.outputs.result == 'skipped' && needs.HML_1-5.outputs.result == 'skipped') ||
-      (needs.HML.outputs.result == 'skipped' && github.event.workflow_run.conclusion == 'skipped') ||
-      (needs.HML_1-5.outputs.result == 'skipped' && github.event.workflow_run.conclusion == 'skipped')
+    if: ${{ needs.ask-user-input.outputs.deploy-hml-1-5 == 'true' }}
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
@@ -156,8 +167,8 @@ jobs:
 
   deploy-prd:
     name: Deploy to prd
-    needs: [deploy-hml, deploy-hml_1-5]
-    if: ${{ needs.deploy-hml.outputs.result == 'success' || needs.deploy-hml_1-5.outputs.result == 'success' || needs.deploy-hml.outputs.result == 'skipped' || needs.deploy-hml_1-5.outputs.result == 'skipped' }}
+    needs: [ask-user-input, deploy-hml, deploy-hml_1-5]
+    if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
