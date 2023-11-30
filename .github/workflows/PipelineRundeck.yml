@@ -146,17 +146,25 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-hml, deploy-hml_1-5]
-    if: |
-      ${{
-         success() &&  
-         (needs.deploy-hml.result == 'success' || needs.deploy-hml_1-5.result == 'success') 
-      }}
+    if: always()
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
       name: prd
     
     steps:
+
+    - name: Wait for Approvals
+      run: |
+       echo "Waiting 1 hour for previous deploy approvals"
+       sleep 3600 # espera 1 hora
+
+    - name: Check if approved
+      if: |
+        !((needs.deploy-hml.result == 'success' || needs.deploy-hml_1-5.result == 'success'))  
+      run: |
+        echo "Previous jobs not approved, skipping deploy"
+        exit 1
     
     - name: Checkout code
       uses: actions/checkout@v4
