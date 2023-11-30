@@ -15,7 +15,7 @@ jobs:
 
   deploy-hml:
     name: Deploy to hml
-    if: ${{ github.event_name == 'workflow_run' || needs.deploy-hml_1-5.outputs.result == 'skipped' }}
+    if: ${{ needs.check-state.outputs.allow_deploy_hml == 'true' || needs.deploy-hml_1-5.outputs.result == 'skipped' }}
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
@@ -82,7 +82,7 @@ jobs:
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
-    if: ${{ github.event_name == 'workflow_run' }}
+    if: ${{ needs.check-state.outputs.allow_deploy_hml_1_5 == 'true' }}
     #if: "(inputs.hml_1-5 == 'true' && inputs.hml == 'false') || (inputs.hml_1-5 == 'true' && inputs.hml == 'true')"
     runs-on: ubuntu-latest
     environment: ${{ matrix.environment }}
