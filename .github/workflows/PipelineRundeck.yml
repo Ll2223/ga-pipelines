@@ -15,7 +15,7 @@ jobs:
 
   deploy-hml:
     name: Deploy to hml
-    if: ${{ needs.check-state.outputs.allow_deploy_hml == 'true' || needs.deploy-hml_1-5.outputs.result == 'skipped' }}
+    if: ${{ needs.check-state.outputs.allow_deploy_hml == 'true' && (needs.deploy-hml_1-5.outputs.result == 'success' || needs.deploy-hml_1-5.outputs.result == 'skipped') }}
     #if: "inputs.hml == 'true' && (inputs.hml_1-5 == 'false' || inputs.hml_1-5 == 'true')"
     runs-on: ubuntu-latest
     environment:
