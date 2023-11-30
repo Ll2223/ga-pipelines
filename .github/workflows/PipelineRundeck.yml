@@ -148,7 +148,7 @@ jobs:
     needs: [deploy-hml, deploy-hml_1-5]
     if: |
       always() &&
-      needs.deploy-hml,.result == 'success' &&
+      needs.deploy-hml.result == 'success' &&
       (needs.deploy-hml_1-5.result == 'success' || needs.deploy-hml_1-5.result == 'skipped')
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
