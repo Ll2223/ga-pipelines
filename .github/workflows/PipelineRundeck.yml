@@ -146,7 +146,7 @@ jobs:
   deploy-prd:
     name: Deploy to prd
     needs: [deploy-hml, deploy-hml_1-5]
-    if: ${{ always() && (needs.deploy-hml.outputs.result == 'success' || needs.deploy-hml_1-5.outputs.result == 'success') }}
+    if: ${{ always() && (needs.deploy-hml.outputs.result == 'success' && needs.deploy-hml_1-5.outputs.result == 'success') }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
     environment:
