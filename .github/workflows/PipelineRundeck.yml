@@ -77,8 +77,8 @@ jobs:
     #     RUNDECK_TOKEN: ${{ secrets.RUNDECK_TOKEN }}
     #     HOST: ${{ secrets.RUNDECK_HOST }}
   
-  deploy-hml_1-5:
-    name: Deploy to hml 1-5
+  deploy-hml_2:
+    name: Deploy to hml 2
     strategy:
       matrix:
         environment: ["HML-1", "HML-5"]
@@ -145,7 +145,7 @@ jobs:
 
   deploy-prd:
     name: Deploy to prd
-    needs: [deploy-hml, deploy-hml_1-5]
+    needs: [deploy-hml, deploy-hml_2]
     if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     #if: ${{ always() && contains(join(needs.*.result, ','), 'success') }}
     runs-on: ubuntu-latest
@@ -191,24 +191,4 @@ jobs:
         for file in "${yaml_files[@]}"; do
           envsubst < $file | tee $file
         done
-
-  update_status:
-    runs-on: ubuntu-latest
-    needs: deploy-prd
-    if: always()
-    env:
-      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      #OWNER: ${{ github.repository_owner }}
-      REPO: ${{ github.repository }}
-    steps:
-      - name: Set Deployment ID
-        id: set-deployment-id
-        run: echo "::set-output name=deployment_id::${{ needs.deploy-prd.outputs.DEPLOYMENT_ID }}"
-      
-      - name: Update Deployment Status
-        uses: rsotnychenko/deployment-status-update@0.2.1
-        with:
-          run_id: ${{ github.run_id }}
-          status: ${{ job.status }}
-          deployment_status_url: 'https://api.github.com/repos/${{ env.REPO }}/deployments/${{ steps.set-deployment-id.outputs.deployment_id }}/statuses'
       
