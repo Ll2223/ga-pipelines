@@ -192,16 +192,16 @@ jobs:
           envsubst < $file | tee $file
         done
 
-  update-github-status:
-    needs: deploy-prd
+  update_status:
     runs-on: ubuntu-latest
-
+    needs: deploy-prd
+    if: always()
     steps:
-      - name: Update GitHub Status
-        uses: geekodour/gh-actions-custom-status@v0.0.4
+      - name: Update Deployment Status
+        uses: rsotnychenko/deployment-status-update@0.2.1
         with:
-          args: >-
-            --state=${{ needs.deploy-prd.outputs.RESULT }}
-            --context=custom-status
-            --target_url=https://github.com/${{ github.repository }}/actions
+          run_id: ${{ github.run_id }}
+          status: ${{ job.status }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       
